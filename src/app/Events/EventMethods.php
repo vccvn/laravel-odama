@@ -29,7 +29,11 @@ trait EventMethods
         'fire',
         'emit',
         'hasEvent',
+        'eventExists',
+        'hasEventListener',
         'removeEventListener',
+        'off',
+        'removeEvent',
     ];
 
     /**
@@ -52,7 +56,7 @@ trait EventMethods
      * @param \Closure $closure
      * @return bool
      */
-    protected static function _on($event, $closure)
+    protected static function _addEventListener($event, $closure)
     {
         if (is_string($event) && is_callable($closure)) {
             $event = strtolower($event);
@@ -73,7 +77,7 @@ trait EventMethods
      * @param mixed ...$params
      * @return mixed
      */
-    public static function _emit($event, ...$params)
+    public static function _dispatchEvent($event, ...$params)
     {
         if (is_string($event)) {
             $event = strtolower($event);
@@ -89,7 +93,7 @@ trait EventMethods
         return null;
     }
 
-    public static function _removeEventListener($event = null, $closure = null)
+    public static function _removeEvent($event = null, $closure = null)
     {
         if (is_string($event)) {
             $event = strtolower($event);
@@ -141,29 +145,24 @@ trait EventMethods
             switch ($fn) {
                 case 'on':
                 case 'addEventListener':
-                    return static::_on(...$params);
+                    return static::_addEventListener(...$params);
                 case 'emit':
                 case 'fire':
                 case 'trigger':
                 case 'dispatchEvent':
-                    return static::_emit(...$params);
+                    return static::_dispatchEvent(...$params);
                 case 'hasEvent':
-                    return static::eventExists(...$params);
+                case 'eventExists':
+                case 'hasEventListener':
+                    return static::_eventExists(...$params);
                 case 'removeEventListener':
-                    return static::_removeEventListener(...$params);
+                case 'off':
+                case 'removeEvent':
+                    return static::_removeEvent(...$params);
             }
         }
+        return null;
     }
 
-    /**
-     * kiểm tra event có tồn tại hay không
-     *
-     * @param string $event
-     * @return boolean
-     */
-    public function hasEvent($event)
-    {
-        return static::eventExists($event);
-    }
 
 }
