@@ -2,7 +2,7 @@
 
 namespace Odama\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Odama\Concerns\Uuid;
 use Odama\Concerns\ModelEventMethods;
@@ -13,7 +13,7 @@ use Odama\Concerns\ModelFileMethods;
  *
  * Cung cấp các tính năng chung cho tất cả model trong hệ thống.
  */
-abstract class BaseModel extends Model
+abstract class Model extends EloquentModel
 {
     use SoftDeletes, Uuid, ModelEventMethods, ModelFileMethods;
 

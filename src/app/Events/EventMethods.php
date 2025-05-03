@@ -6,15 +6,29 @@ use Closure;
 
 /**
  * các phương thúc với event
- * @method void on(string $event, Closure $closure) lắng nghe sự kiện
- * @method void addEventListener(string $event, Closure $closure) lắng nghe sự kiện
- * @method void trigger(string $event, ...$params) Kích hoạt sự kiện
- * @method void fire(string $event, ...$params) Kích hoạt sự kiện
- * @method static void on(string $event, Closure $closure) lắng nghe sự kiện
- * @method static void addEventListener(string $event, Closure $closure) lắng nghe sự kiện
- * @method static void trigger(string $event, ...$params) Kích hoạt sự kiện
- * @method static void fire(string $event, ...$params) Kích hoạt sự kiện
- * @method static void emit(string $event, ...$params) Kích hoạt sự kiện
+ * @method $this on(string $event, Closure $closure) lắng nghe sự kiện
+ * @method $this addEventListener(string $event, Closure $closure) lắng nghe sự kiện
+ * @method $this trigger(string $event, ...$params) Kích hoạt sự kiện
+ * @method $this fire(string $event, ...$params) Kích hoạt sự kiện
+ * @method $this emit(string $event, ...$params) Kích hoạt sự kiện
+ * @method $this hasEvent(string $event) kiểm tra sự kiện có tồn tại hay không
+ * @method $this eventExists(string $event) kiểm tra sự kiện có tồn tại hay không
+ * @method $this hasEventListener(string $event) kiểm tra sự kiện có tồn tại hay không
+ * @method $this removeEvent(string $event, Closure $closure) xóa sự kiện
+ * @method $this off(string $event, Closure $closure) xóa sự kiện
+ * @method $this removeEventListener(string $event, Closure $closure) xóa sự kiện
+ * 
+ * @method static boolean on(string $event, Closure $closure) lắng nghe sự kiện
+ * @method static boolean addEventListener(string $event, Closure $closure) lắng nghe sự kiện
+ * @method static boolean trigger(string $event, ...$params) Kích hoạt sự kiện
+ * @method static boolean fire(string $event, ...$params) Kích hoạt sự kiện
+ * @method static boolean emit(string $event, ...$params) Kích hoạt sự kiện
+ * @method static boolean hasEvent(string $event) kiểm tra sự kiện có tồn tại hay không
+ * @method static boolean eventExists(string $event) kiểm tra sự kiện có tồn tại hay không
+ * @method static boolean hasEventListener(string $event) kiểm tra sự kiện có tồn tại hay không
+ * @method static void removeEvent(string $event, Closure $closure) xóa sự kiện
+ * @method static void off(string $event, Closure $closure) xóa sự kiện
+ * @method static void removeEventListener(string $event, Closure $closure) xóa sự kiện
  * 
  * 
  */
@@ -110,7 +124,7 @@ trait EventMethods
         }
         elseif(is_array($event)){
             foreach($event as $e => $c){
-                static::_removeEventListener($e, $c);
+                static::_removeEvent($e, $c);
             }
         }
         elseif(!$event){
