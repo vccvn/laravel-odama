@@ -2,7 +2,7 @@
 
 namespace Odama\Models;
 
-class MongoModel extends BaseModel
+class MongoModel extends Model
 {
     protected $connection = 'mongodb'; // Hoặc giá trị từ config
     const MODEL_TYPE = 'mongo';

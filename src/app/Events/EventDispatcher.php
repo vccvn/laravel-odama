@@ -8,15 +8,23 @@ use IteratorAggregate;
 use JsonSerializable;
 
 class EventDispatcher implements Countable, ArrayAccess, IteratorAggregate, JsonSerializable{
+    protected $__type__ = null;
     protected $__data__ = [];
     protected $__status__ = true;
+    protected $__context__ = null;
         /**
      * khoi tao doi tuong
      * @param array|object $data
      */
-    function __construct($data = [])
+    function __construct($data = [], $type = null)
     {
-        if(is_array($data) || is_object($data)){
+        if($type){
+            $this->__type__ = $type;
+        }
+        if(is_object($data)){
+            $this->__data__ = $data;
+        }
+        if(is_array($data)){
             foreach ($data as $key => $value) {
                 // duyệt qua mảng hoặc object để gán key, value ở level 0 cho biến data
                 $this->__data__[$key] = $value;
@@ -51,6 +59,9 @@ class EventDispatcher implements Countable, ArrayAccess, IteratorAggregate, Json
      */
     public function  __isset($key)
     {
+        if(is_object($this->__data__)){
+            return isset($this->__data__->$key);
+        }
         return isset($this->__data__[$key]);
     }
 
@@ -60,36 +71,98 @@ class EventDispatcher implements Countable, ArrayAccess, IteratorAggregate, Json
      */
     public function __unset($key)
     {
-        unset($this->__data__[$key]);
+        if(is_object($this->__data__)){
+            unset($this->__data__->$key);
+        }else{
+            unset($this->__data__[$key]);
+        }
     }
 
     public function offsetSet($offset, $value):void {
         if (is_null($offset)) {
-            $this->__data__[] = $value;
+            if(is_object($this->__data__)){
+                $this->__data__->$offset = $value;
+            }else{
+                $this->__data__[] = $value;
+            }
         } else {
-            $this->__data__[$offset] = $value;
+            if(is_object($this->__data__)){
+                $this->__data__->$offset = $value;
+            }else{
+                $this->__data__[$offset] = $value;
+            }
         }
     }
 
     public function offsetExists($offset):bool {
+        if(is_object($this->__data__)){
+            return isset($this->__data__->$offset);
+        }
         return isset($this->__data__[$offset]);
     }
 
     public function offsetUnset($offset):void {
-        unset($this->__data__[$offset]);
+        if(is_object($this->__data__)){
+            unset($this->__data__->$offset);
+        }else{
+            unset($this->__data__[$offset]);
+        }
     }
 
     public function offsetGet($offset): mixed {
+        if(is_object($this->__data__)){
+            return isset($this->__data__->$offset) ? $this->__data__->$offset : null;
+        }
         return isset($this->__data__[$offset]) ? $this->__data__[$offset] : null;
     }
 
     
     public function __set($offset, $value):void {
-        $this->offsetSet($offset, $value);
+        if($offset == 'type'){
+            // $this->__type__ = $value;
+        }
+        else if($offset == 'context'){
+            // 
+        }
+        else{
+            if(is_object($this->__data__)){
+                if($offset == 'data'){
+                    if(!is_array($value) && !is_object($value)){
+                        $this->__data__->$offset = $value;
+                    }else{
+                        $this->__data__ = (object) $value;
+                    }
+                }else{
+                    $this->__data__->$offset = $value;
+                }
+            }else{
+                if($offset == 'data'){
+                    if(!is_array($value) && !is_object($value)){
+                        $this->__data__[$offset] = $value;
+                    }else{
+                        $this->__data__ = $value;
+                    }
+                }else{
+                    $this->__data__[$offset] = $value;
+                }
+            }
+        }
     }
 
-    public function __get($offset) {
-        return isset($this->__data__[$offset]) ? $this->__data__[$offset] : null;
+    public function __get($name) {
+        if($name == 'type'){
+            return $this->__type__;
+        }
+        if($name == 'context'){
+            return $this->__context__;
+        }
+        if(is_object($this->__data__)){
+            if($name == 'data'){
+                return $this->__data__;
+            }
+            return isset($this->__data__->$name) ? $this->__data__->$name : null;
+        }
+        return isset($this->__data__[$name]) ? $this->__data__[$name] : null;
     }
 
     /**
@@ -143,7 +216,12 @@ class EventDispatcher implements Countable, ArrayAccess, IteratorAggregate, Json
      */
     public function __call($name, $arguments)
     {
-        
+        if($name == 'setContext'){
+            if(!$this->__context__ && count($arguments) > 0 && is_object($arguments[0])){
+                $this->__context__ = $arguments[0];
+            }
+            return $this;
+        }
         return isset($this->__data__[$name]) ? $this->__data__[$name] : (array_key_exists('0', $arguments)?$arguments[0]:null);
     }
 

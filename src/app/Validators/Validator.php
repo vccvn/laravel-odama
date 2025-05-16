@@ -1,6 +1,6 @@
 <?php
 
-namespace Gomee\Validators;
+namespace Odama\Validators;
 
 use Illuminate\Support\Facades\Validator as BaseValidator;
 /**

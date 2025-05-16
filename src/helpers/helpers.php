@@ -5,7 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Str;
 define('__RANDOM_VALUE__', md5(uniqid() . time() . rand(10000, 99999)));
 
-if (!defined('MODEL_PRIMARY_KEY') && class_exists('Gomee\Core\System')) {
+if (!defined('MODEL_PRIMARY_KEY') && class_exists('Odama\Core\System')) {
     define('MODEL_PRIMARY_KEY', env('MODEL_PRIMARY_KEY', 'id'));
 }
 if (!function_exists('carbon_datetime')) {
@@ -396,7 +396,7 @@ if (!function_exists('get_video_from_url')) {
      * hỗ trợ youtube là chính =)))
      * @param string $url
      * 
-     * @return Gomee\Helpers\Arr
+     * @return Odama\Helpers\Arr
      */
     function get_video_from_url($url = null)
     {

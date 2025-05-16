@@ -1,5 +1,5 @@
 <?php
-namespace Gomee\Validators;
+namespace Odama\Validators;
 
 class ExampleValidator extends Validator
 {
