@@ -29,7 +29,7 @@ class System
      *
      * @var Arr
      */
-    protected static $_appinfo = null;
+    public static $_appinfo = null;
     /**
      * get filemanager with path
      *

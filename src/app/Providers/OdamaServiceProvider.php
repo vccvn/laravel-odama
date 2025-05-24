@@ -22,12 +22,17 @@ class OdamaServiceProvider extends ServiceProvider
             }
         }
 
+        // Đăng ký OctaneServiceProvider nếu Laravel Octane được phát hiện
+        if (class_exists('Laravel\Octane\Octane')) {
+            $this->app->register(OctaneServiceProvider::class);
+        }
+
         // Bind repository vào container (nếu Laravel đang chạy)
         if ($this->app->bound('config')) {
-            $this->app->bind(
-                \Odama\Contracts\UserRepositoryInterface::class,
-                \Odama\Repositories\UserRepository::class
-            );
+            // $this->app->bind(
+            //     \Odama\Contracts\UserRepositoryInterface::class,
+            //     \Odama\Repositories\UserRepository::class
+            // );
         }
     }
 

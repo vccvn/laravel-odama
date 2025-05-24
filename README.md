@@ -8,6 +8,7 @@ Odama là một thư viện nhân hệ thống giúp tăng tốc phát triển c
 - **Cung cấp các Middleware bảo mật**
 - **Tích hợp các Helper tiện ích**
 - **Hỗ trợ SoftDeletes, Logging, và UUID cho model**
+- **Tương thích với Laravel Octane**
 
 ## 📂 Cấu trúc thư mục
 ```plaintext
@@ -23,6 +24,7 @@ odama/
 │   │   ├── middleware/    # Custom middleware
 │   │   ├── concerns/      # Traits tái sử dụng
 │   │   ├── api/           # API Resources
+│   │   ├── octane/        # Laravel Octane compatibility
 ├── helpers/               # Helper function (không có namespace)
 ├── database/              # Migrations và seeders
 ├── resources/             # Lang & Views
@@ -66,6 +68,11 @@ class User extends Model {
     use HasUuid;
 }
 ```
+
+## 🔒 Bảo mật và Laravel Octane
+Odama được thiết kế để tương thích với Laravel Octane - giúp tăng hiệu suất ứng dụng một cách đáng kể. Tất cả các vấn đề về trạng thái tĩnh và rò rỉ dữ liệu đã được xử lý tự động thông qua `OctaneServiceProvider`.
+
+Chi tiết về cách sử dụng Odama với Laravel Octane có thể tìm thấy trong [Hướng dẫn Laravel Octane](src/app/Octane/README.md).
 
 ## 🛠️ Đóng góp
 Mọi đóng góp đều được hoan nghênh! Hãy fork repo và gửi pull request.

@@ -146,7 +146,7 @@ abstract class BaseRepository
                 
             }
             elseif(in_array($method, static::$eventMethods)){
-                $this->callEventMethod($method, $params);
+                static::callEventMethod($method, $params);
             }
             elseif($this->_funcExists($method)){
                 $this->_nonStaticCall($method, $params);
@@ -156,16 +156,16 @@ abstract class BaseRepository
             }
             elseif (substr($method, 0, 4) == 'emit') {
                 if(strlen($event = substr($method, 4)) > 0 && ctype_upper(substr($event, 0, 1))){
-                    return $this->_dispatchEvent($event, ...$params);
+                    return static::_dispatchEvent($event, ...$params);
                 }else{
-                    return $this->_dispatchEvent(array_shift($params), ...$params);
+                    return static::_dispatchEvent(array_shift($params), ...$params);
                 }
             }
         }elseif($this->_funcExists($method)){
             $this->_nonStaticCall($method, $params);
         }
         elseif(substr($method, 0, 4) == 'emit' && strlen($event = substr($method, 4)) > 0 && (ctype_upper(substr($event, 0, 1)))){
-            return $this->_dispatchEvent($event, ...$params);
+            return static::_dispatchEvent($event, ...$params);
         }
         return $this;
     }
