@@ -14,14 +14,6 @@ class OdamaServiceProvider extends ServiceProvider
             return;
         }
 
-        // Chỉ load helpers nếu tồn tại thư mục
-        $helperPath = base_path('helpers');
-        if (is_dir($helperPath)) {
-            foreach (glob($helperPath . '/*.php') as $filename) {
-                require_once $filename;
-            }
-        }
-
         // Đăng ký OctaneServiceProvider nếu Laravel Octane được phát hiện
         if (class_exists('Laravel\Octane\Octane')) {
             $this->app->register(OctaneServiceProvider::class);

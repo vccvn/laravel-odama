@@ -813,7 +813,7 @@ trait EloquentQuery{
      * 
      * @return object
      */
-    public function addsearch(string $keywords = null, $search_by = null)
+    public function addsearch(string $keywords = '', $search_by = null)
     {
         $this->_params['@search'] = [
             'keyword' => $keywords,

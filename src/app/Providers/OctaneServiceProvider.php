@@ -11,9 +11,19 @@ use Odama\Services\Service;
 use Odama\Engines\ViewManager;
 use Odama\Repositories\BaseRepository;
 use Odama\Concerns\MagicMethods;
+use Odama\Contracts\OctaneCompatible;
 
 class OctaneServiceProvider extends ServiceProvider
 {
+    protected $container = [];
+    
+    /**
+     * Danh sách các lớp triển khai OctaneCompatible
+     * 
+     * @var array
+     */
+    protected $octaneAwareClasses = [];
+    
     /**
      * Register any application services.
      */
@@ -28,8 +38,12 @@ class OctaneServiceProvider extends ServiceProvider
     public function boot(): void
     {
         if (!$this->app->bound('octane')) {
+            // octane not found
             return;
         }
+
+        // Phát hiện các lớp triển khai OctaneCompatible
+        $this->discoverOctaneAwareClasses();
 
         // Xử lý khi worker bắt đầu
         $this->app['events']->listen(WorkerStarting::class, function () {
@@ -47,7 +61,34 @@ class OctaneServiceProvider extends ServiceProvider
         $this->app['events']->listen(RequestTerminated::class, function () {
             // Reset các trạng thái tĩnh sau khi xử lý request
             $this->resetStaticState();
+            $this->resetServicesState();
         });
+    }
+
+    /**
+     * Add service to the container
+     *
+     * @param mixed $service
+     * @return $this
+     */
+    public function addService($service)
+    {
+        $this->container[] = $service;
+        return $this;
+    }
+
+    /**
+     * Phát hiện các lớp triển khai OctaneCompatible
+     * 
+     * @return void
+     */
+    protected function discoverOctaneAwareClasses(): void
+    {
+        // Thêm các lớp đã biết triển khai OctaneCompatible
+        $this->octaneAwareClasses = [
+            \Odama\Core\OctaneAwareService::class,
+            // Thêm các lớp khác tại đây
+        ];
     }
 
     /**
@@ -79,6 +120,30 @@ class OctaneServiceProvider extends ServiceProvider
 
         // Reset trạng thái của MagicMethods và Event Listeners
         $this->resetMagicMethodsState();
+        
+        // Reset trạng thái của các lớp triển khai OctaneCompatible
+        $this->resetOctaneAwareClasses();
+    }
+    
+    /**
+     * Reset trạng thái của các lớp triển khai OctaneCompatible
+     * 
+     * @return void
+     */
+    protected function resetOctaneAwareClasses(): void
+    {
+        foreach ($this->octaneAwareClasses as $class) {
+            if (class_exists($class) && is_subclass_of($class, OctaneCompatible::class)) {
+                // Reset trạng thái tĩnh
+                $class::resetStaticState();
+                
+                // Reset trạng thái của instance nếu đã được đăng ký trong container
+                if ($this->app->bound($class)) {
+                    $instance = $this->app->make($class);
+                    $instance->resetInstanceState();
+                }
+            }
+        }
     }
 
     /**
@@ -152,6 +217,34 @@ class OctaneServiceProvider extends ServiceProvider
     {
         if (class_exists(BaseRepository::class)) {
             // Reset các trạng thái tĩnh của BaseRepository nếu cần
+        }
+    }
+
+    protected function resetServicesState(): void
+    {
+        // Reset các phương thức có thể reset trạng thái của các service
+        $resetFunctions = ['reset', 'resetState', 'clear', 'destroy'];
+        // Reset các service trong container
+        foreach ($this->container as $service) {
+            // Kiểm tra nếu service là đối tượng và có phương thức reset
+            if(!is_object($service)) {
+                continue;
+            }
+            
+            // Nếu service triển khai OctaneCompatible, gọi resetInstanceState
+            if ($service instanceof OctaneCompatible) {
+                $service->resetInstanceState();
+                continue;
+            }
+            
+            // Reset các phương thức có thể reset trạng thái của service
+            foreach($resetFunctions as $function) {
+                // Kiểm tra nếu phương thức tồn tại
+                if(method_exists($service, $function)) {
+                    // Gọi phương thức reset trạng thái của service
+                    $service->$function();
+                }
+            }
         }
     }
 } 

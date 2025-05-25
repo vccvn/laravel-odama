@@ -22,7 +22,8 @@
             "Odama\\": "src/app/"
         },
         "files": [
-            "helpers/helpers.php"
+            "helpers/helpers.php",
+            "helpers/routes.php"
         ]
     },
     "extra": {
